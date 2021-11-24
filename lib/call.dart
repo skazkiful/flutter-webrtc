@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'signaling.dart';
 
 class CallPage extends StatefulWidget {
   const CallPage({Key? key}) : super(key: key);
@@ -10,10 +11,13 @@ class CallPage extends StatefulWidget {
 }
 
 class _CallPageState extends State<CallPage> {
+  Signaling? _signaling;
   bool mic = true;
   bool cam = true;
+  String? _selfId;
   bool showUi = true;
   double opacityLevel = 1.0;
+  Session? _session;
   RTCVideoRenderer _localRenderer = RTCVideoRenderer();
   RTCVideoRenderer _remoteRenderer = RTCVideoRenderer();
 
@@ -21,11 +25,13 @@ class _CallPageState extends State<CallPage> {
   void initState() {
     super.initState();
     initRenderers();
+    _connect();
   }
 
   @override
   deactivate() {
     super.deactivate();
+    _signaling?.close();
     _localRenderer.dispose();
     _remoteRenderer.dispose();
   }
@@ -35,11 +41,82 @@ class _CallPageState extends State<CallPage> {
     await _remoteRenderer.initialize();
   }
 
+  rtcInitialize() async{
+    setState(() {
+      _remoteRenderer = RTCVideoRenderer();
+    });
+    await _remoteRenderer.initialize();
+  }
+
+  void _connect() async {
+    _signaling ??= Signaling()..connect();
+    _signaling?.onSignalingStateChange = (SignalingState state) {
+      switch (state) {
+        case SignalingState.ConnectionClosed:
+        case SignalingState.ConnectionError:
+        case SignalingState.ConnectionOpen:
+          break;
+      }
+    };
+
+    _signaling?.onCallStateChange = (Session session, CallState state) {
+      switch (state) {
+        case CallState.CallStateNew:
+          setState(() {
+            _session = session;
+          });
+          break;
+        case CallState.CallStateBye:
+          setState(() {
+            rtcInitialize();
+            _session = null;
+          });
+          break;
+        case CallState.CallStateInvite:
+        case CallState.CallStateConnected:
+        case CallState.CallStateRinging:
+      }
+    };
+
+    _signaling?.onLocalStream = ((stream) {
+      setState(() {
+        _localRenderer.srcObject = stream;
+      });
+    });
+
+    _signaling?.onAddRemoteStream = ((_, stream) {
+      setState(() {
+        _remoteRenderer.srcObject = stream;
+      });
+    });
+
+    _signaling?.onPeersUpdate = ((event) {
+      print(event);
+      _invitePeer(context, event['id']);
+    });
+    setState(() {
+      _selfId = _signaling!.selfId;
+    });
+  }
+
+  _invitePeer(BuildContext context, String peerId) async {
+    if (_signaling != null && peerId != _selfId) {
+      _signaling?.invite(peerId);
+    }
+  }
+
+  _hangUp() {
+    if (_session != null) {
+      _signaling?.bye(_session!.sid);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: WillPopScope(
           onWillPop: () async {
+            await _hangUp();
             Navigator.pop(context);
             return false;
           },
@@ -135,11 +212,7 @@ class _CallPageState extends State<CallPage> {
                                   borderRadius: BorderRadius.circular(100),
                                   onTap: (){
                                     setState(() {
-                                      if(cam){
-                                        cam = false;
-                                      }else{
-                                        cam = true;
-                                      }
+                                      cam = _signaling?.toggleCamera();
                                     });
                                   },
                                   child: Container(
@@ -160,11 +233,7 @@ class _CallPageState extends State<CallPage> {
                                   borderRadius: BorderRadius.circular(100),
                                   onTap: () async{
                                     setState(() {
-                                      if(mic){
-                                        mic = false;
-                                      }else{
-                                        mic = true;
-                                      }
+                                      mic = _signaling?.toggleMic();
                                     });
                                   },
                                   child: Container(
@@ -184,6 +253,7 @@ class _CallPageState extends State<CallPage> {
                                 child: InkWell(
                                   borderRadius: BorderRadius.circular(100),
                                   onTap: () async{
+                                    await _hangUp();
                                     Navigator.pop(context);
                                   },
                                   child: Container(
