@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'callbuttons/end_call_button.dart';
 import 'callbuttons/toggle_video_button.dart';
 import 'signaling.dart';
@@ -241,22 +240,30 @@ class _CallPageState extends State<CallPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              ToggleVideoButton(status: cam, onClick: (){
-                                print('clicked');
-                                setState((){
-                                  cam = !cam;
-                                });
-                              }, ),
-                              ToggleAudioButton(status: mic, onClick: (){
-                                print('clicked');
-                                setState((){
-                                  mic = !mic;
-                                });
-                              }, ),
-                              EndCallButton(onClick: () async{
-                                Navigator.pop(context);
-                                await _hangUp();
-                              },),
+                              ToggleVideoButton(
+                                status: cam,
+                                onClick: () {
+                                  print('clicked');
+                                  setState(() {
+                                    cam = !cam;
+                                  });
+                                },
+                              ),
+                              ToggleAudioButton(
+                                status: mic,
+                                onClick: () {
+                                  print('clicked');
+                                  setState(() {
+                                    mic = !mic;
+                                  });
+                                },
+                              ),
+                              EndCallButton(
+                                onClick: () async {
+                                  Navigator.pop(context);
+                                  await _hangUp();
+                                },
+                              ),
                             ],
                           ),
                         ),

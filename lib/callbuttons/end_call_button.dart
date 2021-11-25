@@ -7,8 +7,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 /// [OnTap] returns [_onClick] function to end call on call page.
 class EndCallButton extends StatelessWidget {
   /// Function required and will initialize end call on call page.
-  Function _onClick;
-  EndCallButton({required Function onClick}): _onClick = onClick;
+  final Function _onClick;
+  EndCallButton({required Function onClick}) : _onClick = onClick;
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +25,7 @@ class EndCallButton extends StatelessWidget {
           height: 55,
           width: 55,
           child: Container(
-            child: SvgPicture.asset(
-                'assets/end-call.svg'),
+            child: SvgPicture.asset('assets/end-call.svg'),
             width: 28,
           ),
         ),
@@ -34,4 +33,3 @@ class EndCallButton extends StatelessWidget {
     );
   }
 }
-
