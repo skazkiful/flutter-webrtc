@@ -49,18 +49,26 @@ class Signaling {
 
   /// Calls when need to change signaling state
   Function(SignalingState state)? onSignalingStateChange;
+
   /// Calls when need to change call state
   Function(Session session, CallState state)? onCallStateChange;
+
   /// Calls when users local video and audio turns on or off
   Function(MediaStream stream)? onLocalStream;
+
   /// Calls when need to add remote users video and audio stream
   Function(Session session, MediaStream stream)? onAddRemoteStream;
+
   /// Calls when remote users audio and video was removed
   Function(Session session, MediaStream stream)? onRemoveRemoteStream;
+
   /// Calls when peers was updated
   Function(dynamic event)? onPeersUpdate;
+
   /// Calls when was received new message from webrtc
-  Function(Session session, RTCDataChannel dc, RTCDataChannelMessage data)? onDataChannelMessage;
+  Function(Session session, RTCDataChannel dc, RTCDataChannelMessage data)?
+      onDataChannelMessage;
+
   /// Calls when was created new DataChannel
   Function(Session session, RTCDataChannel dc)? onDataChannel;
 
@@ -98,9 +106,8 @@ class Signaling {
   /// Make call to user using his [peerId]
   void invite(String peerId) async {
     var sessionId = selfId + '-' + peerId;
-    Session session = await _createSession(null,
-        peerId: peerId,
-        sessionId: sessionId);
+    Session session =
+        await _createSession(null, peerId: peerId, sessionId: sessionId);
     _sessions[sessionId] = session;
     _createOffer(session);
     onCallStateChange?.call(session, CallState.CallStateNew);
@@ -138,8 +145,7 @@ class Signaling {
           var sessionId = data['session_id'];
           var session = _sessions[sessionId];
           var newSession = await _createSession(session,
-              peerId: peerId,
-              sessionId: sessionId);
+              peerId: peerId, sessionId: sessionId);
           _sessions[sessionId] = newSession;
           await newSession.pc?.setRemoteDescription(
               RTCSessionDescription(description['sdp'], description['type']));
@@ -241,7 +247,7 @@ class Signaling {
       'video': {
         'mandatory': {
           'minWidth':
-          '640', // Provide your own width, height and frame rate here
+              '640', // Provide your own width, height and frame rate here
           'minHeight': '480',
           'minFrameRate': '30',
         },
@@ -250,7 +256,8 @@ class Signaling {
       }
     };
 
-    MediaStream stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
+    MediaStream stream =
+        await navigator.mediaDevices.getUserMedia(mediaConstraints);
     onLocalStream?.call(stream);
     return stream;
   }
@@ -260,8 +267,7 @@ class Signaling {
   /// [session] - session name
   /// [peerId] - user id wich will be connected with us
   Future<Session> _createSession(Session? session,
-      {required String peerId,
-        required String sessionId}) async {
+      {required String peerId, required String sessionId}) async {
     var newSession = session ?? Session(sid: sessionId, pid: peerId);
     RTCPeerConnection pc = await createPeerConnection({
       ..._iceServers,
@@ -278,16 +284,16 @@ class Signaling {
     pc.onIceCandidate = (candidate) async {
       await Future.delayed(
           const Duration(seconds: 1),
-              () => _send('candidate', {
-            'to': peerId,
-            'from': selfId,
-            'candidate': {
-              'sdpMLineIndex': candidate.sdpMlineIndex,
-              'sdpMid': candidate.sdpMid,
-              'candidate': candidate.candidate,
-            },
-            'session_id': sessionId,
-          }));
+          () => _send('candidate', {
+                'to': peerId,
+                'from': selfId,
+                'candidate': {
+                  'sdpMLineIndex': candidate.sdpMlineIndex,
+                  'sdpMid': candidate.sdpMid,
+                  'candidate': candidate.candidate,
+                },
+                'session_id': sessionId,
+              }));
     };
 
     pc.onIceConnectionState = (state) {};
@@ -307,7 +313,6 @@ class Signaling {
     return newSession;
   }
 
-
   /// Method create RTCDataChannel in session
   void _addDataChannel(Session session, RTCDataChannel channel) {
     channel.onDataChannelState = (e) {};
@@ -321,8 +326,7 @@ class Signaling {
   /// this method make offer to user to make p2p call
   Future<void> _createOffer(Session session) async {
     try {
-      RTCSessionDescription s =
-      await session.pc!.createOffer({});
+      RTCSessionDescription s = await session.pc!.createOffer({});
       await session.pc!.setLocalDescription(s);
       _send('offer', {
         'to': session.pid,
@@ -338,8 +342,7 @@ class Signaling {
   /// This method answers to user about making p2p call
   Future<void> _createAnswer(Session session) async {
     try {
-      RTCSessionDescription s =
-      await session.pc!.createAnswer({});
+      RTCSessionDescription s = await session.pc!.createAnswer({});
       await session.pc!.setLocalDescription(s);
       _send('answer', {
         'to': session.pid,
@@ -391,7 +394,6 @@ class Signaling {
     await session.pc?.close();
     await session.dc?.close();
   }
-
 
   /// This method trun off and turn on users camera
   toggleCamera() {

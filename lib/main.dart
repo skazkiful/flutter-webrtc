@@ -4,6 +4,7 @@ import 'package:flutter_webrtc_app/call.dart';
 void main() {
   runApp(MyApp());
 }
+
 ///Initialize MyApp Class
 class MyApp extends StatelessWidget {
   @override
@@ -12,7 +13,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         backgroundColor: Colors.white,
-        primarySwatch: Colors.blue,
       ),
       home: MyHomePage(),
     );
@@ -30,8 +30,11 @@ class MyHomePage extends StatelessWidget {
           color: Color(0xFF757DE8),
           borderRadius: BorderRadius.circular(8),
           child: InkWell(
-            onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (BuildContext builder) => CallPage()));
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext builder) => CallPage()));
             },
             borderRadius: BorderRadius.circular(8),
             child: Container(
