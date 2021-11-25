@@ -4,7 +4,7 @@ import 'package:flutter_webrtc_app/call.dart';
 void main() {
   runApp(MyApp());
 }
-
+///Initialize MyApp Class
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
