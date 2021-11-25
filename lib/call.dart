@@ -14,10 +14,12 @@ class CallPage extends StatefulWidget {
 class _CallPageState extends State<CallPage> {
   _CallPageState();
   Signaling? _signaling;
+
   /// Working microphone indicator
   ///
   /// Used for toggling microphone on CallPage class
   bool mic = true;
+
   /// Working camera indicator
   ///
   /// Used for toggling camera on CallPage class
@@ -51,7 +53,7 @@ class _CallPageState extends State<CallPage> {
   }
 
   /// Initialize remote RTCVideoRender
-  rtcInitialize() async{
+  rtcInitialize() async {
     setState(() {
       _remoteRenderer = RTCVideoRenderer();
     });
@@ -139,12 +141,12 @@ class _CallPageState extends State<CallPage> {
             child: InkWell(
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
-              onTap: (){
+              onTap: () {
                 setState(() {
-                  if(showUi){
+                  if (showUi) {
                     opacityLevel = 0;
                     showUi = false;
-                  }else{
+                  } else {
                     opacityLevel = 1.0;
                     showUi = true;
                   }
@@ -157,7 +159,11 @@ class _CallPageState extends State<CallPage> {
                     child: Container(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height,
-                      child: RTCVideoView(_remoteRenderer, objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,),
+                      child: RTCVideoView(
+                        _remoteRenderer,
+                        objectFit:
+                            RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                      ),
                     ),
                   ),
                   Positioned(
@@ -173,31 +179,42 @@ class _CallPageState extends State<CallPage> {
                                   begin: Alignment.topCenter,
                                   tileMode: TileMode.clamp,
                                   end: Alignment.bottomCenter,
-                                  colors: <Color>[Colors.black.withOpacity(0.86), Colors.black.withOpacity(0.21),Colors.black.withOpacity(0)]
-                              )
-                          ),
+                                  colors: <Color>[
+                                Colors.black.withOpacity(0.86),
+                                Colors.black.withOpacity(0.21),
+                                Colors.black.withOpacity(0)
+                              ])),
                           child: Container(
-                            child: Text("Ferris",
+                            child: Text(
+                              "Ferris",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 22,
-                              ),),
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                  (cam)?Positioned(
-                    top: 20,
-                    right: 14,
-                    child: SafeArea(
-                        child: Container(
-                          width: 119.0,
-                          height: 159.0,
-                          child: RTCVideoView(_localRenderer, mirror: true, objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,),
-                          decoration: BoxDecoration(color: Colors.black54),
-                        )),
-                  ):Container(),
+                  (cam)
+                      ? Positioned(
+                          top: 20,
+                          right: 14,
+                          child: SafeArea(
+                              child: Container(
+                            width: 119.0,
+                            height: 159.0,
+                            child: RTCVideoView(
+                              _localRenderer,
+                              mirror: true,
+                              objectFit: RTCVideoViewObjectFit
+                                  .RTCVideoViewObjectFitCover,
+                            ),
+                            decoration: BoxDecoration(color: Colors.black54),
+                          )),
+                        )
+                      : Container(),
                   Positioned(
                     bottom: 0,
                     child: SafeArea(
@@ -210,20 +227,25 @@ class _CallPageState extends State<CallPage> {
                                   begin: Alignment.bottomCenter,
                                   tileMode: TileMode.clamp,
                                   end: Alignment.topCenter,
-                                  colors: <Color>[Colors.black.withOpacity(0.86), Colors.black.withOpacity(0.21),Colors.black.withOpacity(0)]
-                              )
-                          ),
+                                  colors: <Color>[
+                                Colors.black.withOpacity(0.86),
+                                Colors.black.withOpacity(0.21),
+                                Colors.black.withOpacity(0)
+                              ])),
                           width: MediaQuery.of(context).size.width,
-                          padding: EdgeInsets.only(bottom: 48, right: 88, left: 88),
+                          padding:
+                              EdgeInsets.only(bottom: 48, right: 88, left: 88),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Material(
                                 borderRadius: BorderRadius.circular(100),
-                                color: (cam)?Color(0xFFD9D9D9):Color(0xFF6C6C6C),
+                                color: (cam)
+                                    ? Color(0xFFD9D9D9)
+                                    : Color(0xFF6C6C6C),
                                 child: InkWell(
                                   borderRadius: BorderRadius.circular(100),
-                                  onTap: (){
+                                  onTap: () {
                                     setState(() {
                                       cam = _signaling?.toggleCamera();
                                     });
@@ -233,7 +255,11 @@ class _CallPageState extends State<CallPage> {
                                     height: 55,
                                     width: 55,
                                     child: Container(
-                                      child: (cam)?SvgPicture.asset('assets/video-off.svg'):SvgPicture.asset('assets/video-on.svg'),
+                                      child: (cam)
+                                          ? SvgPicture.asset(
+                                              'assets/video-off.svg')
+                                          : SvgPicture.asset(
+                                              'assets/video-on.svg'),
                                       width: 28,
                                     ),
                                   ),
@@ -241,10 +267,12 @@ class _CallPageState extends State<CallPage> {
                               ),
                               Material(
                                 borderRadius: BorderRadius.circular(100),
-                                color: (mic)?Color(0xFFD9D9D9):Color(0xFF6C6C6C),
+                                color: (mic)
+                                    ? Color(0xFFD9D9D9)
+                                    : Color(0xFF6C6C6C),
                                 child: InkWell(
                                   borderRadius: BorderRadius.circular(100),
-                                  onTap: () async{
+                                  onTap: () async {
                                     setState(() {
                                       mic = _signaling?.toggleMic();
                                     });
@@ -254,7 +282,11 @@ class _CallPageState extends State<CallPage> {
                                     height: 55,
                                     width: 55,
                                     child: Container(
-                                      child: (mic)?SvgPicture.asset('assets/mic-off.svg'):SvgPicture.asset('assets/mic-on.svg'),
+                                      child: (mic)
+                                          ? SvgPicture.asset(
+                                              'assets/mic-off.svg')
+                                          : SvgPicture.asset(
+                                              'assets/mic-on.svg'),
                                       width: 28,
                                     ),
                                   ),
@@ -265,7 +297,7 @@ class _CallPageState extends State<CallPage> {
                                 color: Color(0xFF990000),
                                 child: InkWell(
                                   borderRadius: BorderRadius.circular(100),
-                                  onTap: () async{
+                                  onTap: () async {
                                     await _hangUp();
                                     Navigator.pop(context);
                                   },
@@ -274,7 +306,8 @@ class _CallPageState extends State<CallPage> {
                                     height: 55,
                                     width: 55,
                                     child: Container(
-                                      child: SvgPicture.asset('assets/end-call.svg'),
+                                      child: SvgPicture.asset(
+                                          'assets/end-call.svg'),
                                       width: 28,
                                     ),
                                   ),
@@ -289,8 +322,7 @@ class _CallPageState extends State<CallPage> {
                 ],
               ),
             ),
-          )
-      ),
+          )),
     );
   }
 }
