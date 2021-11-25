@@ -6,12 +6,14 @@ import 'random_string.dart';
 
 import 'websocket.dart';
 
+/// States of signaling
 enum SignalingState {
   ConnectionOpen,
   ConnectionClosed,
   ConnectionError,
 }
 
+/// States of call
 enum CallState {
   CallStateNew,
   CallStateRinging,
@@ -20,6 +22,10 @@ enum CallState {
   CallStateBye,
 }
 
+/// Session view
+///
+/// Where [sid] - session id
+/// And [pid] - peer id
 class Session {
   Session({required this.sid, required this.pid});
   String pid;
@@ -29,6 +35,7 @@ class Session {
   List<RTCIceCandidate> remoteCandidates = [];
 }
 
+/// Signaling class used to make connection between 2 users
 class Signaling {
   Signaling();
 
@@ -40,14 +47,21 @@ class Signaling {
   MediaStream? _localStream;
   List<MediaStream> _remoteStreams = <MediaStream>[];
 
+  /// Calls when need to change signaling state
   Function(SignalingState state)? onSignalingStateChange;
+  /// Calls when need to change call state
   Function(Session session, CallState state)? onCallStateChange;
+  /// Calls when users local video and audio turns on or off
   Function(MediaStream stream)? onLocalStream;
+  /// Calls when need to add remote users video and audio stream
   Function(Session session, MediaStream stream)? onAddRemoteStream;
+  /// Calls when remote users audio and video was removed
   Function(Session session, MediaStream stream)? onRemoveRemoteStream;
+  /// Calls when peers was updated
   Function(dynamic event)? onPeersUpdate;
-  Function(Session session, RTCDataChannel dc, RTCDataChannelMessage data)?
-  onDataChannelMessage;
+  /// Calls when was received new message from webrtc
+  Function(Session session, RTCDataChannel dc, RTCDataChannelMessage data)? onDataChannelMessage;
+  /// Calls when was created new DataChannel
   Function(Session session, RTCDataChannel dc)? onDataChannel;
 
   String get sdpSemantics => 'unified-plan';
@@ -66,11 +80,13 @@ class Signaling {
     ]
   };
 
+  /// Closes connection to websocket and cleans sessions
   close() async {
     await _cleanSessions();
     _socket?.close();
   }
 
+  /// Turn off and turn on users microphone
   toggleMic() {
     if (_localStream != null) {
       bool enabled = _localStream!.getAudioTracks()[0].enabled;
@@ -79,6 +95,7 @@ class Signaling {
     }
   }
 
+  /// Make call to user using his [peerId]
   void invite(String peerId) async {
     var sessionId = selfId + '-' + peerId;
     Session session = await _createSession(null,
@@ -89,6 +106,7 @@ class Signaling {
     onCallStateChange?.call(session, CallState.CallStateNew);
   }
 
+  /// End call with user closing their session [sessionId]
   void bye(String sessionId) {
     _send('bye', {
       'session_id': sessionId,
@@ -100,6 +118,7 @@ class Signaling {
     }
   }
 
+  /// Method process [message] received from websocket
   void onMessage(message) async {
     Map<String, dynamic> mapData = message;
     var data = mapData['data'];
@@ -191,6 +210,7 @@ class Signaling {
     }
   }
 
+  /// Method create connection to websocket
   Future<void> connect() async {
     _socket = SimpleWebSocket();
     _socket?.onOpen = () {
@@ -214,6 +234,7 @@ class Signaling {
     await _socket?.connect();
   }
 
+  ///
   Future<MediaStream> createStream() async {
     final Map<String, dynamic> mediaConstraints = {
       'audio': true,
@@ -234,6 +255,10 @@ class Signaling {
     return stream;
   }
 
+  /// Method create session beetwen two users
+  ///
+  /// [session] - session name
+  /// [peerId] - user id wich will be connected with us
   Future<Session> _createSession(Session? session,
       {required String peerId,
         required String sessionId}) async {
@@ -282,6 +307,8 @@ class Signaling {
     return newSession;
   }
 
+
+  /// Method create RTCDataChannel in session
   void _addDataChannel(Session session, RTCDataChannel channel) {
     channel.onDataChannelState = (e) {};
     channel.onMessage = (RTCDataChannelMessage data) {
@@ -291,6 +318,7 @@ class Signaling {
     onDataChannel?.call(session, channel);
   }
 
+  /// this method make offer to user to make p2p call
   Future<void> _createOffer(Session session) async {
     try {
       RTCSessionDescription s =
@@ -307,6 +335,7 @@ class Signaling {
     }
   }
 
+  /// This method answers to user about making p2p call
   Future<void> _createAnswer(Session session) async {
     try {
       RTCSessionDescription s =
@@ -323,6 +352,10 @@ class Signaling {
     }
   }
 
+  /// This method send data to websocket
+  ///
+  /// Where [event] - event type
+  /// And [data] - message text
   _send(event, data) {
     var request = Map();
     request["type"] = event;
@@ -330,14 +363,8 @@ class Signaling {
     _socket?.send(_encoder.convert(request));
   }
 
+  /// This method clean all sessions
   Future<void> _cleanSessions() async {
-    if (_localStream != null) {
-      /*_localStream!.getTracks().forEach((element) async {
-        await element.stop();
-      });
-      await _localStream!.dispose();
-      _localStream = null;*/
-    }
     _sessions.forEach((key, sess) async {
       await sess.pc?.close();
       await sess.dc?.close();
@@ -345,6 +372,7 @@ class Signaling {
     _sessions.clear();
   }
 
+  /// This method calls when user leave from call and close session with this user
   void _closeSessionByPeerId(String peerId) {
     var session;
     _sessions.removeWhere((String key, Session sess) {
@@ -358,17 +386,14 @@ class Signaling {
     }
   }
 
+  /// This method close custom session
   Future<void> _closeSession(Session session) async {
-    /*_localStream?.getTracks().forEach((element) async {
-      await element.stop();
-    });
-    await _localStream?.dispose();
-    _localStream = null;*/
-
     await session.pc?.close();
     await session.dc?.close();
   }
 
+
+  /// This method trun off and turn on users camera
   toggleCamera() {
     if (_localStream != null) {
       bool enabled = _localStream!.getVideoTracks()[0].enabled;

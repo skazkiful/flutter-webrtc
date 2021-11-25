@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the randomBetween function from the random_string library, for the Dart programming language.">
+  <title>randomBetween function - random_string library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+
+  
+</head>
+
+
+<body data-base-href="../"
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">flutter_webrtc_app</a></li>
+    <li><a href="../random_string/random_string-library.html">random_string</a></li>
+    <li class="self-crumb">randomBetween function</li>
+  </ol>
+  <div class="self-name">randomBetween</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+
+  <div id="dartdoc-main-content" class="main-content">
+      <div>
+<h1><span class="kind-function">randomBetween</span> function 
+    <a href="https://dart.dev/null-safety" class="feature feature-null-safety" title="Supports the null safety language feature.">Null safety</a>
+ 
+</h1></div>
+
+    <section class="multi-line-signature">
+        
+
+<span class="returntype"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+<span class="name ">randomBetween</span>(<wbr><ol class="parameter-list"><li><span class="parameter" id="randomBetween-param-from"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">from</span>, </span></li>
+<li><span class="parameter" id="randomBetween-param-to"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span> <span class="parameter-name">to</span></span></li>
+</ol>)
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Generates a random integer where <code>from</code> &lt;= <code>to</code>.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">int randomBetween(int from, int to) {
+  if (from &gt; to) throw Exception(&#39;$from cannot be &gt; $to&#39;);
+  var rand = Random();
+  return ((to - from) * rand.nextDouble()).toInt() + from;
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+  <li><a href="../index.html">flutter_webrtc_app</a></li>
+  <li><a href="../random_string/random_string-library.html">random_string</a></li>
+  <li class="self-crumb">randomBetween function</li>
+</ol>
+
+
+    <h5>random_string library</h5>
+    <ol>
+
+
+
+  <li class="section-title"><a href="../random_string/random_string-library.html#constants">Constants</a></li>
+  <li><a href="../random_string/ASCII_END-constant.html">ASCII_END</a></li>
+  <li><a href="../random_string/ASCII_START-constant.html">ASCII_START</a></li>
+  <li><a href="../random_string/LOWER_ALPHA_END-constant.html">LOWER_ALPHA_END</a></li>
+  <li><a href="../random_string/LOWER_ALPHA_START-constant.html">LOWER_ALPHA_START</a></li>
+  <li><a href="../random_string/NUMERIC_END-constant.html">NUMERIC_END</a></li>
+  <li><a href="../random_string/NUMERIC_START-constant.html">NUMERIC_START</a></li>
+  <li><a href="../random_string/UPPER_ALPHA_END-constant.html">UPPER_ALPHA_END</a></li>
+  <li><a href="../random_string/UPPER_ALPHA_START-constant.html">UPPER_ALPHA_START</a></li>
+
+
+  <li class="section-title"><a href="../random_string/random_string-library.html#functions">Functions</a></li>
+  <li><a href="../random_string/randomBetween.html">randomBetween</a></li>
+  <li><a href="../random_string/randomNumeric.html">randomNumeric</a></li>
+  <li><a href="../random_string/randomString.html">randomString</a></li>
+
+
+
+</ol>
+
+  </div><!--/.sidebar-offcanvas-left-->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+
+</main>
+
+<footer>
+  <span class="no-break">
+    flutter_webrtc_app
+      2.0.0+1
+  </span>
+
+  
+</footer>
+
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/script.js?v1"></script>
+
+
+
+</body>
+
+</html>
+

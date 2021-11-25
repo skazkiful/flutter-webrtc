@@ -1,11 +1,18 @@
 import 'dart:io';
 
+/// This class used to make, close and calls to our websocket
 class SimpleWebSocket {
   var _socket;
+  /// Calls when connection to websocket was called
   Function()? onOpen;
+  /// Calls when was received new message from websocket
   Function(dynamic msg)? onMessage;
-  Function(int code, String reaso)? onClose;
+  /// Calls when was called close to websocket
+  Function(int code, String reason)? onClose;
 
+  /// This method used to make connect to our websocket
+  ///
+  /// Which located on [wss://flutter-sandbox-skazkiful.herokuapp.com]
   connect() async {
     try {
       _socket = await WebSocket.connect('wss://flutter-sandbox-skazkiful.herokuapp.com');
@@ -20,12 +27,14 @@ class SimpleWebSocket {
     }
   }
 
+  /// This method send [data] to websocket
   send(data) {
     if (_socket != null) {
       _socket.add(data);
     }
   }
 
+  /// This method close connection to websocket
   close() {
     if (_socket != null) _socket.close();
   }
