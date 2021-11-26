@@ -3,6 +3,7 @@ import 'dart:io';
 /// This class used to make, close and calls to our websocket.
 class SimpleWebSocket {
   /// Current websocket connection.
+  // ignore: close_sinks
   WebSocket? _socket;
 
   /// Calls when connection to websocket was called.
