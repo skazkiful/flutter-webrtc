@@ -70,7 +70,8 @@
   <h2><span>Implementation</span></h2>
   <pre class="language-dart"><code class="language-dart">connect() async {
   try {
-    _socket = await WebSocket.connect(&#39;wss:&#47;&#47;flutter-sandbox-skazkiful.herokuapp.com&#39;);
+    _socket = await WebSocket.connect(
+        &#39;wss:&#47;&#47;flutter-sandbox-skazkiful.herokuapp.com&#39;);
     onOpen?.call();
     _socket.listen((data) {
       onMessage?.call(data);

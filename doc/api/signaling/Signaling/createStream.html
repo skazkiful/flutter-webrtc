@@ -59,6 +59,9 @@
 
     </section>
     
+<section class="desc markdown">
+  <p>Used to start getting media data from local user phone</p>
+</section>
 
 
     
@@ -70,7 +73,7 @@
     &#39;video&#39;: {
       &#39;mandatory&#39;: {
         &#39;minWidth&#39;:
-        &#39;640&#39;, &#47;&#47; Provide your own width, height and frame rate here
+            &#39;640&#39;, &#47;&#47; Provide your own width, height and frame rate here
         &#39;minHeight&#39;: &#39;480&#39;,
         &#39;minFrameRate&#39;: &#39;30&#39;,
       },
@@ -79,7 +82,8 @@
     }
   };
 
-  MediaStream stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
+  MediaStream stream =
+      await navigator.mediaDevices.getUserMedia(mediaConstraints);
   onLocalStream?.call(stream);
   return stream;
 }</code></pre>
@@ -123,7 +127,6 @@
     <li><a href="../../signaling/Signaling/onRemoveRemoteStream.html">onRemoveRemoteStream</a></li>
     <li><a href="../../signaling/Signaling/onSignalingStateChange.html">onSignalingStateChange</a></li>
     <li class="inherited"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></li>
-    <li><a href="../../signaling/Signaling/sdpSemantics.html">sdpSemantics</a></li>
     <li><a href="../../signaling/Signaling/selfId.html">selfId</a></li>
 
     <li class="section-title"><a href="../../signaling/Signaling-class.html#instance-methods">Methods</a></li>
