@@ -286,7 +286,7 @@ class Signaling {
     return stream;
   }
 
-  /// Method create session beetwen two users.
+  /// Method create session between two users.
   ///
   /// [session] - session name.
   /// [peerId] - user id which will be connected with us.

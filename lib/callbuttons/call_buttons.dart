@@ -4,16 +4,25 @@ import 'package:flutter_svg/flutter_svg.dart';
 /// Toggle microphone button on call page.
 ///
 /// Returns Material button.
-/// Required [_onClick] function to toggle microphone on call page.
+/// Required [onClick] function to toggle microphone on call page.
 /// Required [_status] bool to track current microphone status on call page.
-class ToggleAudioButton extends StatelessWidget {
+class ToggleCallButtons extends StatelessWidget {
+  ToggleCallButtons({required this.onClick, required bool status, required Color enabledColor, Color? toggleColor, required SvgPicture iconOn, SvgPicture? iconOff})
+      : _status = status, enabledColor = enabledColor, toggleColor = toggleColor, iconOn = iconOn, iconOff = iconOff;
   /// Variable need to toggle microphone on call page.
   final bool _status;
 
   /// Function need to toggle microphone on call page.
   final Function onClick;
-  ToggleAudioButton({required this.onClick, required bool status})
-      : _status = status;
+
+  ///
+  final Color enabledColor;
+
+  final Color? toggleColor;
+
+  final SvgPicture iconOn;
+
+  final SvgPicture? iconOff;
 
   @override
   Widget build(BuildContext context) {

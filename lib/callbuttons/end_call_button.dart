@@ -4,11 +4,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 /// End call button on call page.
 ///
 /// Return Material button.
-/// [OnTap] returns [_onClick] function to end call on call page.
+/// [OnTap] returns [onClick] function to end call on call page.
 class EndCallButton extends StatelessWidget {
   /// Function required and will initialize end call on call page.
-  final Function _onClick;
-  EndCallButton({required Function onClick}) : _onClick = onClick;
+  final Function onClick;
+  EndCallButton({required this.onClick});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class EndCallButton extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(100),
         onTap: () async {
-          _onClick();
+          onClick();
         },
         child: Container(
           alignment: Alignment.center,
