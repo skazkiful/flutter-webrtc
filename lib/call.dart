@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'callbuttons/end_call_button.dart';
+import 'callbuttons/toggle_video_button.dart';
 import 'signaling.dart';
+import 'callbuttons/toggle_audio_button.dart';
 
 /// This class used to make p2p calls
 class CallPage extends StatefulWidget {
@@ -238,81 +240,30 @@ class _CallPageState extends State<CallPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Material(
-                                borderRadius: BorderRadius.circular(100),
-                                color: (cam)
-                                    ? Color(0xFFD9D9D9)
-                                    : Color(0xFF6C6C6C),
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(100),
-                                  onTap: () {
-                                    setState(() {
-                                      cam = _signaling?.toggleCamera();
-                                    });
-                                  },
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    height: 55,
-                                    width: 55,
-                                    child: Container(
-                                      child: (cam)
-                                          ? SvgPicture.asset(
-                                              'assets/video-off.svg')
-                                          : SvgPicture.asset(
-                                              'assets/video-on.svg'),
-                                      width: 28,
-                                    ),
-                                  ),
-                                ),
+                              ToggleVideoButton(
+                                status: cam,
+                                onClick: () {
+                                  print('clicked');
+                                  setState(() {
+                                    cam = !cam;
+                                  });
+                                },
                               ),
-                              Material(
-                                borderRadius: BorderRadius.circular(100),
-                                color: (mic)
-                                    ? Color(0xFFD9D9D9)
-                                    : Color(0xFF6C6C6C),
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(100),
-                                  onTap: () async {
-                                    setState(() {
-                                      mic = _signaling?.toggleMic();
-                                    });
-                                  },
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    height: 55,
-                                    width: 55,
-                                    child: Container(
-                                      child: (mic)
-                                          ? SvgPicture.asset(
-                                              'assets/mic-off.svg')
-                                          : SvgPicture.asset(
-                                              'assets/mic-on.svg'),
-                                      width: 28,
-                                    ),
-                                  ),
-                                ),
+                              ToggleAudioButton(
+                                status: mic,
+                                onClick: () {
+                                  print('clicked');
+                                  setState(() {
+                                    mic = !mic;
+                                  });
+                                },
                               ),
-                              Material(
-                                borderRadius: BorderRadius.circular(100),
-                                color: Color(0xFF990000),
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(100),
-                                  onTap: () async {
-                                    await _hangUp();
-                                    Navigator.pop(context);
-                                  },
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    height: 55,
-                                    width: 55,
-                                    child: Container(
-                                      child: SvgPicture.asset(
-                                          'assets/end-call.svg'),
-                                      width: 28,
-                                    ),
-                                  ),
-                                ),
-                              )
+                              EndCallButton(
+                                onClick: () async {
+                                  Navigator.pop(context);
+                                  await _hangUp();
+                                },
+                              ),
                             ],
                           ),
                         ),
