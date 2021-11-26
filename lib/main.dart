@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_webrtc_app/call.dart';
+import 'package:flutter_sandbox/call.dart';
 
 void main() {
   runApp(MyApp());

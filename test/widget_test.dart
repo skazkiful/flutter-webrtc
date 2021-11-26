@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:flutter_webrtc_app/main.dart';
+import 'package:flutter_sandbox/main.dart';
 
 void main() {
   testWidgets('Test Home Page', (WidgetTester tester) async {
