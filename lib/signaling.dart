@@ -6,26 +6,31 @@ import 'random_string.dart';
 
 import 'websocket.dart';
 
-/// States of signaling
+/// States of signaling.
 enum SignalingState {
+  /// Calls when connection to websocket was opened.
   ConnectionOpen,
+
+  /// Calls when connection to websocket was closed.
   ConnectionClosed,
+
+  /// Calls when websocket returns error.
   ConnectionError,
 }
 
-/// States of call
+/// States of call.
 enum CallState {
+  /// Calls when was created new session.
   CallStateNew,
-  CallStateRinging,
-  CallStateInvite,
-  CallStateConnected,
+
+  /// Calls when one of users whant to end call.
   CallStateBye,
 }
 
-/// Session view
+/// Session view.
 ///
-/// Where [sid] - session id
-/// And [pid] - peer id
+/// Where [sid] - session id.
+/// And [pid] - peer id.
 class Session {
   Session({required this.sid, required this.pid});
   String pid;
@@ -35,45 +40,32 @@ class Session {
   List<RTCIceCandidate> remoteCandidates = [];
 }
 
-/// Signaling class used to make connection between 2 users
+/// Signaling class used to make connection between 2 users.
 class Signaling {
   Signaling();
 
-  JsonEncoder _encoder = JsonEncoder();
-  JsonDecoder _decoder = JsonDecoder();
+  /// [selfId] - random number to define own id.
   String selfId = randomNumeric(6);
+
+  /// [_socket] - used to interact with [SimpleWebSocket] class.
   SimpleWebSocket? _socket;
+
+  /// List of users sessions.
   Map<String, Session> _sessions = {};
+
+  /// Local video and audio stream.
   MediaStream? _localStream;
+
+  /// Remote users video and audio streams.
   List<MediaStream> _remoteStreams = <MediaStream>[];
 
-  /// Calls when need to change signaling state
-  Function(SignalingState state)? onSignalingStateChange;
+  /// Used to encode string to json.
+  JsonEncoder _encoder = JsonEncoder();
 
-  /// Calls when need to change call state
-  Function(Session session, CallState state)? onCallStateChange;
+  /// Used to decode json to string.
+  JsonDecoder _decoder = JsonDecoder();
 
-  /// Calls when users local video and audio turns on or off
-  Function(MediaStream stream)? onLocalStream;
-
-  /// Calls when need to add remote users video and audio stream
-  Function(Session session, MediaStream stream)? onAddRemoteStream;
-
-  /// Calls when remote users audio and video was removed
-  Function(Session session, MediaStream stream)? onRemoveRemoteStream;
-
-  /// Calls when peers was updated
-  Function(dynamic event)? onPeersUpdate;
-
-  /// Calls when was received new message from webrtc
-  Function(Session session, RTCDataChannel dc, RTCDataChannelMessage data)?
-      onDataChannelMessage;
-
-  /// Calls when was created new DataChannel
-  Function(Session session, RTCDataChannel dc)? onDataChannel;
-
-  String get sdpSemantics => 'unified-plan';
-
+  /// List of ice servers.
   Map<String, dynamic> _iceServers = {
     'iceServers': [
       {'url': 'stun:stun.stunprotocol.org:3478'},
@@ -81,6 +73,7 @@ class Signaling {
     ]
   };
 
+  /// Config of creating peer connection.
   final Map<String, dynamic> _config = {
     'mandatory': {},
     'optional': [
@@ -88,13 +81,38 @@ class Signaling {
     ]
   };
 
-  /// Closes connection to websocket and cleans sessions
+  /// Calls when need to change signaling state.
+  Function(SignalingState state)? onSignalingStateChange;
+
+  /// Calls when need to change call state.
+  Function(Session session, CallState state)? onCallStateChange;
+
+  /// Calls when users local video and audio turns on or off.
+  Function(MediaStream stream)? onLocalStream;
+
+  /// Calls when need to add remote users video and audio stream.
+  Function(Session session, MediaStream stream)? onAddRemoteStream;
+
+  /// Calls when remote users audio and video was removed.
+  Function(Session session, MediaStream stream)? onRemoveRemoteStream;
+
+  /// Calls when peers was updated.
+  Function(dynamic event)? onPeersUpdate;
+
+  /// Calls when was received new message from webrtc.
+  Function(Session session, RTCDataChannel dc, RTCDataChannelMessage data)?
+      onDataChannelMessage;
+
+  /// Calls when was created new DataChannel.
+  Function(Session session, RTCDataChannel dc)? onDataChannel;
+
+  /// Closes connection to websocket and cleans sessions.
   close() async {
     await _cleanSessions();
-    _socket?.close();
+    await _socket?.close();
   }
 
-  /// Turn off and turn on users microphone
+  /// Turn off and turn on users microphone.
   toggleMic() {
     if (_localStream != null) {
       bool enabled = _localStream!.getAudioTracks()[0].enabled;
@@ -103,9 +121,18 @@ class Signaling {
     }
   }
 
-  /// Make call to user using his [peerId]
+  /// This method trun off and turn on users camera.
+  toggleCamera() {
+    if (_localStream != null) {
+      bool enabled = _localStream!.getVideoTracks()[0].enabled;
+      _localStream!.getVideoTracks()[0].enabled = !enabled;
+      return !enabled;
+    }
+  }
+
+  /// Make call to user using his [peerId].
   void invite(String peerId) async {
-    var sessionId = selfId + '-' + peerId;
+    String sessionId = selfId + '-' + peerId;
     Session session =
         await _createSession(null, peerId: peerId, sessionId: sessionId);
     _sessions[sessionId] = session;
@@ -113,22 +140,22 @@ class Signaling {
     onCallStateChange?.call(session, CallState.CallStateNew);
   }
 
-  /// End call with user closing their session [sessionId]
-  void bye(String sessionId) {
+  /// End call with user closing their session [sessionId].
+  bye(String sessionId) {
     _send('bye', {
       'session_id': sessionId,
       'from': selfId,
     });
-    var sess = _sessions[sessionId];
+    Session? sess = _sessions[sessionId];
     if (sess != null) {
       _closeSession(sess);
     }
   }
 
-  /// Method process [message] received from websocket
+  /// Method process [message] received from websocket.
   void onMessage(message) async {
     Map<String, dynamic> mapData = message;
-    var data = mapData['data'];
+    Map data = mapData['data'];
     print(data);
     switch (mapData['type']) {
       case 'new':
@@ -140,11 +167,11 @@ class Signaling {
         break;
       case 'offer':
         {
-          var peerId = data['from'];
-          var description = data['description'];
-          var sessionId = data['session_id'];
-          var session = _sessions[sessionId];
-          var newSession = await _createSession(session,
+          String peerId = data['from'];
+          Map description = data['description'];
+          String sessionId = data['session_id'];
+          Session? session = _sessions[sessionId];
+          Session newSession = await _createSession(session,
               peerId: peerId, sessionId: sessionId);
           _sessions[sessionId] = newSession;
           await newSession.pc?.setRemoteDescription(
@@ -161,19 +188,19 @@ class Signaling {
         break;
       case 'answer':
         {
-          var description = data['description'];
-          var sessionId = data['session_id'];
-          var session = _sessions[sessionId];
+          Map description = data['description'];
+          String sessionId = data['session_id'];
+          Session? session = _sessions[sessionId];
           session?.pc?.setRemoteDescription(
               RTCSessionDescription(description['sdp'], description['type']));
         }
         break;
       case 'candidate':
         {
-          var peerId = data['from'];
-          var candidateMap = data['candidate'];
-          var sessionId = data['session_id'];
-          var session = _sessions[sessionId];
+          String peerId = data['from'];
+          Map candidateMap = data['candidate'];
+          String sessionId = data['session_id'];
+          Session? session = _sessions[sessionId];
           RTCIceCandidate candidate = RTCIceCandidate(candidateMap['candidate'],
               candidateMap['sdpMid'], candidateMap['sdpMLineIndex']);
 
@@ -191,19 +218,17 @@ class Signaling {
         break;
       case 'leave':
         {
-          var peerId = data as String;
+          String peerId = data as String;
           _closeSessionByPeerId(peerId);
         }
         break;
       case 'bye':
         {
-          var sessionId = data['session_id'];
+          String sessionId = data['session_id'];
           print('bye: ' + sessionId);
-          var session = _sessions.remove(sessionId);
-          if (session != null) {
-            onCallStateChange?.call(session, CallState.CallStateBye);
-            _closeSession(session);
-          }
+          Session? session = _sessions.remove(sessionId);
+          onCallStateChange?.call(session!, CallState.CallStateBye);
+          _closeSession(session!);
         }
         break;
       case 'keepalive':
@@ -216,7 +241,7 @@ class Signaling {
     }
   }
 
-  /// Method create connection to websocket
+  /// Method create connection to websocket.
   Future<void> connect() async {
     _socket = SimpleWebSocket();
     _socket?.onOpen = () {
@@ -232,7 +257,7 @@ class Signaling {
       onMessage(_decoder.convert(message));
     };
 
-    _socket?.onClose = (int code, String reason) {
+    _socket?.onClose = (int? code, String? reason) {
       print('Closed by server [$code => $reason]!');
       onSignalingStateChange?.call(SignalingState.ConnectionClosed);
     };
@@ -240,14 +265,13 @@ class Signaling {
     await _socket?.connect();
   }
 
-  ///
+  /// Used to start getting media data from local user phone.
   Future<MediaStream> createStream() async {
     final Map<String, dynamic> mediaConstraints = {
       'audio': true,
       'video': {
         'mandatory': {
-          'minWidth':
-              '640', // Provide your own width, height and frame rate here
+          'minWidth': '640',
           'minHeight': '480',
           'minFrameRate': '30',
         },
@@ -262,16 +286,16 @@ class Signaling {
     return stream;
   }
 
-  /// Method create session beetwen two users
+  /// Method create session beetwen two users.
   ///
-  /// [session] - session name
-  /// [peerId] - user id wich will be connected with us
+  /// [session] - session name.
+  /// [peerId] - user id which will be connected with us.
   Future<Session> _createSession(Session? session,
       {required String peerId, required String sessionId}) async {
-    var newSession = session ?? Session(sid: sessionId, pid: peerId);
+    Session newSession = session ?? Session(sid: sessionId, pid: peerId);
     RTCPeerConnection pc = await createPeerConnection({
       ..._iceServers,
-      ...{'sdpSemantics': sdpSemantics}
+      ...{'sdpSemantics': 'unified-plan'}
     }, _config);
     pc.onTrack = (event) {
       if (event.track.kind == 'video') {
@@ -313,7 +337,7 @@ class Signaling {
     return newSession;
   }
 
-  /// Method create RTCDataChannel in session
+  /// Method create RTCDataChannel in session.
   void _addDataChannel(Session session, RTCDataChannel channel) {
     channel.onDataChannelState = (e) {};
     channel.onMessage = (RTCDataChannelMessage data) {
@@ -323,7 +347,7 @@ class Signaling {
     onDataChannel?.call(session, channel);
   }
 
-  /// this method make offer to user to make p2p call
+  /// this method make offer to user to make p2p call.
   Future<void> _createOffer(Session session) async {
     try {
       RTCSessionDescription s = await session.pc!.createOffer({});
@@ -339,7 +363,7 @@ class Signaling {
     }
   }
 
-  /// This method answers to user about making p2p call
+  /// This method answers to user about making p2p call.
   Future<void> _createAnswer(Session session) async {
     try {
       RTCSessionDescription s = await session.pc!.createAnswer({});
@@ -355,18 +379,18 @@ class Signaling {
     }
   }
 
-  /// This method send data to websocket
+  /// This method send data to websocket.
   ///
-  /// Where [event] - event type
-  /// And [data] - message text
+  /// Where [event] - event type.
+  /// And [data] - message text.
   _send(event, data) {
-    var request = Map();
+    Map request = Map();
     request["type"] = event;
     request["data"] = data;
     _socket?.send(_encoder.convert(request));
   }
 
-  /// This method clean all sessions
+  /// This method clean all sessions.
   Future<void> _cleanSessions() async {
     _sessions.forEach((key, sess) async {
       await sess.pc?.close();
@@ -375,32 +399,21 @@ class Signaling {
     _sessions.clear();
   }
 
-  /// This method calls when user leave from call and close session with this user
+  /// This method calls when user leave from call and close session with this user.
   void _closeSessionByPeerId(String peerId) {
-    var session;
+    Session session = Session(pid: '', sid: '');
     _sessions.removeWhere((String key, Session sess) {
       var ids = key.split('-');
       session = sess;
       return peerId == ids[0] || peerId == ids[1];
     });
-    if (session != null) {
-      _closeSession(session);
-      onCallStateChange?.call(session, CallState.CallStateBye);
-    }
+    _closeSession(session);
+    onCallStateChange?.call(session, CallState.CallStateBye);
   }
 
-  /// This method close custom session
+  /// This method close custom session.
   Future<void> _closeSession(Session session) async {
     await session.pc?.close();
     await session.dc?.close();
-  }
-
-  /// This method trun off and turn on users camera
-  toggleCamera() {
-    if (_localStream != null) {
-      bool enabled = _localStream!.getVideoTracks()[0].enabled;
-      _localStream!.getVideoTracks()[0].enabled = !enabled;
-      return !enabled;
-    }
   }
 }

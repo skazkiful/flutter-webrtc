@@ -113,8 +113,11 @@ Widget build(BuildContext context) {
         color: Color(0xFF757DE8),
         borderRadius: BorderRadius.circular(8),
         child: InkWell(
-          onTap: (){
-            Navigator.push(context, MaterialPageRoute(builder: (BuildContext builder) =&gt; CallPage()));
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext builder) =&gt; CallPage()));
           },
           borderRadius: BorderRadius.circular(8),
           child: Container(

@@ -5,7 +5,7 @@ import 'callbuttons/toggle_video_button.dart';
 import 'signaling.dart';
 import 'callbuttons/toggle_audio_button.dart';
 
-/// This class used to make p2p calls
+/// This class used to make p2p calls.
 class CallPage extends StatefulWidget {
   const CallPage({Key? key}) : super(key: key);
 
@@ -15,23 +15,34 @@ class CallPage extends StatefulWidget {
 
 class _CallPageState extends State<CallPage> {
   _CallPageState();
-  Signaling? _signaling;
 
-  /// Working microphone indicator
+  /// Opacity of part Widgets.
+  double opacityLevel = 1.0;
+
+  /// Working microphone indicator.
   ///
-  /// Used for toggling microphone on CallPage class
+  /// Used for toggling microphone on CallPage class.
   bool mic = true;
 
-  /// Working camera indicator
+  /// Working camera indicator.
   ///
-  /// Used for toggling camera on CallPage class
+  /// Used for toggling camera on CallPage class.
   bool cam = true;
+
+  /// String with local users id.
   String? _selfId;
-  bool showUi = true;
-  double opacityLevel = 1.0;
+
+  /// Current session.
   Session? _session;
+
+  /// Local users media data stream.
   RTCVideoRenderer _localRenderer = RTCVideoRenderer();
+
+  /// Remote users media data stream.
   RTCVideoRenderer _remoteRenderer = RTCVideoRenderer();
+
+  /// Variable used to interact with [Signaling] class.
+  Signaling? _signaling;
 
   @override
   void initState() {
@@ -48,13 +59,13 @@ class _CallPageState extends State<CallPage> {
     _remoteRenderer.dispose();
   }
 
-  /// Initialize RTCVideoRender
+  /// Initialize RTCVideoRender.
   initRenderers() async {
     await _localRenderer.initialize();
     await _remoteRenderer.initialize();
   }
 
-  /// Initialize remote RTCVideoRender
+  /// Initialize remote RTCVideoRender.
   rtcInitialize() async {
     setState(() {
       _remoteRenderer = RTCVideoRenderer();
@@ -62,7 +73,7 @@ class _CallPageState extends State<CallPage> {
     await _remoteRenderer.initialize();
   }
 
-  /// This method used when need to connect to websocket using [Signaling] class and [connect] method
+  /// This method used when need to connect to websocket using [Signaling] class and [connect] method.
   void _connect() async {
     _signaling ??= Signaling()..connect();
     _signaling?.onSignalingStateChange = (SignalingState state) {
@@ -87,9 +98,6 @@ class _CallPageState extends State<CallPage> {
             _session = null;
           });
           break;
-        case CallState.CallStateInvite:
-        case CallState.CallStateConnected:
-        case CallState.CallStateRinging:
       }
     };
 
@@ -114,18 +122,23 @@ class _CallPageState extends State<CallPage> {
     });
   }
 
-  /// Invite peer to p2p call
+  /// Invite peer to p2p call.
   _invitePeer(BuildContext context, String peerId) async {
     if (_signaling != null && peerId != _selfId) {
       _signaling?.invite(peerId);
     }
   }
 
-  /// Ending p2p call
-  _hangUp() {
+  /// Ending p2p call.
+  _hangUp() async {
     if (_session != null) {
       _signaling?.bye(_session!.sid);
     }
+    setState(() {
+      _localRenderer.srcObject = null;
+      _remoteRenderer.srcObject = null;
+      _session = null;
+    });
   }
 
   @override
@@ -133,8 +146,8 @@ class _CallPageState extends State<CallPage> {
     return Scaffold(
       body: WillPopScope(
           onWillPop: () async {
-            await _hangUp();
             Navigator.pop(context);
+            await _hangUp();
             return false;
           },
           child: Container(
@@ -145,12 +158,10 @@ class _CallPageState extends State<CallPage> {
               highlightColor: Colors.transparent,
               onTap: () {
                 setState(() {
-                  if (showUi) {
+                  if (opacityLevel == 1.0) {
                     opacityLevel = 0;
-                    showUi = false;
                   } else {
                     opacityLevel = 1.0;
-                    showUi = true;
                   }
                 });
               },
@@ -243,18 +254,16 @@ class _CallPageState extends State<CallPage> {
                               ToggleVideoButton(
                                 status: cam,
                                 onClick: () {
-                                  print('clicked');
                                   setState(() {
-                                    cam = !cam;
+                                    cam = _signaling!.toggleCamera();
                                   });
                                 },
                               ),
                               ToggleAudioButton(
                                 status: mic,
                                 onClick: () {
-                                  print('clicked');
                                   setState(() {
-                                    mic = !mic;
+                                    mic = _signaling!.toggleMic();
                                   });
                                 },
                               ),
