@@ -254,7 +254,6 @@ class _CallPageState extends State<CallPage> {
                               ToggleVideoButton(
                                 status: cam,
                                 onClick: () {
-                                  print('clicked');
                                   setState(() {
                                     cam = _signaling!.toggleCamera();
                                   });
@@ -263,7 +262,6 @@ class _CallPageState extends State<CallPage> {
                               ToggleAudioButton(
                                 status: mic,
                                 onClick: () {
-                                  print('clicked');
                                   setState(() {
                                     mic = _signaling!.toggleMic();
                                   });
