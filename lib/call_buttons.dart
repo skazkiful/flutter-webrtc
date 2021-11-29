@@ -7,28 +7,37 @@ import 'package:flutter_svg/flutter_svg.dart';
 /// Required [onClick] function to toggle microphone on call page.
 /// Required [_status] bool to track current microphone status on call page.
 class ToggleCallButtons extends StatelessWidget {
-  ToggleCallButtons({required this.onClick, required bool status, required Color enabledColor, Color? toggleColor, required SvgPicture iconOn, SvgPicture? iconOff})
-      : _status = status, enabledColor = enabledColor, toggleColor = toggleColor, iconOn = iconOn, iconOff = iconOff;
+  ToggleCallButtons(
+      {required this.onClick,
+      required this.enabledColor,
+      required this.iconOn,
+      this.status = true,
+      this.toggleColor,
+      this.iconOff});
+
   /// Variable need to toggle microphone on call page.
-  final bool _status;
+  final bool status;
 
   /// Function need to toggle microphone on call page.
   final Function onClick;
 
-  ///
+  /// Variable used to define color which used when status is true
   final Color enabledColor;
 
+  /// Variable used to define color which used when status is false
   final Color? toggleColor;
 
-  final SvgPicture iconOn;
+  /// Variable used to define icon which used when status is true
+  final String iconOn;
 
-  final SvgPicture? iconOff;
+  /// Variable used to define icon which used when status is false
+  final String? iconOff;
 
   @override
   Widget build(BuildContext context) {
     return Material(
       borderRadius: BorderRadius.circular(100),
-      color: (_status) ? Color(0xFFD9D9D9) : Color(0xFF6C6C6C),
+      color: (status) ? enabledColor : toggleColor,
       child: InkWell(
         borderRadius: BorderRadius.circular(100),
         onTap: () async {
@@ -39,10 +48,10 @@ class ToggleCallButtons extends StatelessWidget {
           height: 55,
           width: 55,
           child: Container(
-            child: (_status)
-                ? SvgPicture.asset('assets/mic-off.svg')
-                : SvgPicture.asset('assets/mic-on.svg'),
-            width: 28,
+            height: 28,
+            child: (status)
+                ? SvgPicture.asset(iconOn)
+                : SvgPicture.asset(iconOff!),
           ),
         ),
       ),
