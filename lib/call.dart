@@ -56,7 +56,9 @@ class _CallPageState extends State<CallPage> {
   @override
   deactivate() {
     super.deactivate();
-    timer!.cancel();
+    if (timer != null) {
+      timer!.cancel();
+    }
     _signaling?.close();
     _localRenderer.dispose();
     _remoteRenderer.dispose();
@@ -269,6 +271,7 @@ class _CallPageState extends State<CallPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               ToggleCallButtons(
+                                  key: Key('videotoggle'),
                                   iconOn: 'assets/video-off.svg',
                                   iconOff: 'assets/video-on.svg',
                                   onClick: () {
@@ -280,6 +283,7 @@ class _CallPageState extends State<CallPage> {
                                   enabledColor: Color(0xFFD9D9D9),
                                   toggleColor: Color(0xFF6C6C6C)),
                               ToggleCallButtons(
+                                  key: Key('mictoggle'),
                                   iconOn: 'assets/mic-off.svg',
                                   iconOff: 'assets/mic-on.svg',
                                   onClick: () {
@@ -291,6 +295,7 @@ class _CallPageState extends State<CallPage> {
                                   enabledColor: Color(0xFFD9D9D9),
                                   toggleColor: Color(0xFF6C6C6C)),
                               ToggleCallButtons(
+                                key: Key('endcall'),
                                 iconOn: 'assets/end-call.svg',
                                 onClick: () async {
                                   Navigator.pop(context);

@@ -11,9 +11,13 @@ class ToggleCallButtons extends StatelessWidget {
       {required this.onClick,
       required this.enabledColor,
       required this.iconOn,
+      this.key,
       this.status = true,
       this.toggleColor,
       this.iconOff});
+
+  ///
+  final Key? key;
 
   /// Variable need to toggle microphone on call page.
   final bool status;
