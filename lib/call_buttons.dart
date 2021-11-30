@@ -9,39 +9,27 @@ import 'package:flutter_svg/flutter_svg.dart';
 class ToggleCallButtons extends StatelessWidget {
   ToggleCallButtons(
       {required this.onClick,
-      required this.enabledColor,
-      required this.iconOn,
-      this.key,
-      this.status = true,
-      this.toggleColor,
-      this.iconOff});
+      required this.color,
+      required this.icon,
+      this.key});
 
   ///
   final Key? key;
 
-  /// Variable need to toggle microphone on call page.
-  final bool status;
-
   /// Function need to toggle microphone on call page.
   final Function onClick;
 
-  /// Variable used to define color which used when status is true
-  final Color enabledColor;
+  /// Variable used to define color
+  final Color color;
 
-  /// Variable used to define color which used when status is false
-  final Color? toggleColor;
-
-  /// Variable used to define icon which used when status is true
-  final String iconOn;
-
-  /// Variable used to define icon which used when status is false
-  final String? iconOff;
+  /// Variable used to define icon
+  final String icon;
 
   @override
   Widget build(BuildContext context) {
     return Material(
       borderRadius: BorderRadius.circular(100),
-      color: (status) ? enabledColor : toggleColor,
+      color: color,
       child: InkWell(
         borderRadius: BorderRadius.circular(100),
         onTap: () async {
@@ -53,9 +41,7 @@ class ToggleCallButtons extends StatelessWidget {
           width: 55,
           child: Container(
             height: 28,
-            child: (status)
-                ? SvgPicture.asset(iconOn)
-                : SvgPicture.asset(iconOff!),
+            child: SvgPicture.asset(icon),
           ),
         ),
       ),

@@ -30,6 +30,7 @@ class MyHomePage extends StatelessWidget {
           color: Color(0xFF757DE8),
           borderRadius: BorderRadius.circular(8),
           child: InkWell(
+            key: Key('join'),
             onTap: () {
               Navigator.push(
                   context,

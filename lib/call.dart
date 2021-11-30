@@ -173,12 +173,13 @@ class _CallPageState extends State<CallPage> {
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             child: InkWell(
+              key: Key('backInkWell'),
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
               onTap: () {
                 setState(() {
                   if (opacityLevel == 1.0) {
-                    opacityLevel = 0;
+                    opacityLevel = 0.0;
                   } else {
                     opacityLevel = 1.0;
                   }
@@ -201,6 +202,7 @@ class _CallPageState extends State<CallPage> {
                   Positioned(
                     child: SafeArea(
                       child: AnimatedOpacity(
+                        key: Key('animatedOpacity'),
                         duration: Duration(milliseconds: 250),
                         opacity: opacityLevel,
                         child: Container(
@@ -271,37 +273,41 @@ class _CallPageState extends State<CallPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               ToggleCallButtons(
-                                  key: Key('videotoggle'),
-                                  iconOn: 'assets/video-off.svg',
-                                  iconOff: 'assets/video-on.svg',
-                                  onClick: () {
-                                    setState(() {
-                                      cam = _signaling!.toggleCamera();
-                                    });
-                                  },
-                                  status: cam,
-                                  enabledColor: Color(0xFFD9D9D9),
-                                  toggleColor: Color(0xFF6C6C6C)),
+                                key: Key('videotoggle'),
+                                icon: (cam)
+                                    ? 'assets/video-off.svg'
+                                    : 'assets/video-on.svg',
+                                onClick: () {
+                                  setState(() {
+                                    cam = _signaling!.toggleCamera();
+                                  });
+                                },
+                                color: (cam)
+                                    ? Color(0xFFD9D9D9)
+                                    : Color(0xFF6C6C6C),
+                              ),
                               ToggleCallButtons(
-                                  key: Key('mictoggle'),
-                                  iconOn: 'assets/mic-off.svg',
-                                  iconOff: 'assets/mic-on.svg',
-                                  onClick: () {
-                                    setState(() {
-                                      mic = _signaling!.toggleMic();
-                                    });
-                                  },
-                                  status: mic,
-                                  enabledColor: Color(0xFFD9D9D9),
-                                  toggleColor: Color(0xFF6C6C6C)),
+                                key: Key('mictoggle'),
+                                icon: (mic)
+                                    ? 'assets/mic-off.svg'
+                                    : 'assets/mic-on.svg',
+                                onClick: () {
+                                  setState(() {
+                                    mic = _signaling!.toggleMic();
+                                  });
+                                },
+                                color: (mic)
+                                    ? Color(0xFFD9D9D9)
+                                    : Color(0xFF6C6C6C),
+                              ),
                               ToggleCallButtons(
                                 key: Key('endcall'),
-                                iconOn: 'assets/end-call.svg',
+                                icon: 'assets/end-call.svg',
                                 onClick: () async {
                                   Navigator.pop(context);
                                   await _hangUp();
                                 },
-                                enabledColor: Color(0xFF990000),
+                                color: Color(0xFF990000),
                               ),
                             ],
                           ),
