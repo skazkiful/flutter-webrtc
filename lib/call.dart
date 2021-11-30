@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'callbuttons/end_call_button.dart';
-import 'callbuttons/toggle_video_button.dart';
+import 'call_buttons.dart';
 import 'signaling.dart';
-import 'callbuttons/toggle_audio_button.dart';
+import 'dart:async';
 
 /// This class used to make p2p calls.
 class CallPage extends StatefulWidget {
@@ -44,6 +43,9 @@ class _CallPageState extends State<CallPage> {
   /// Variable used to interact with [Signaling] class.
   Signaling? _signaling;
 
+  /// Timer variable, used to ping websocket every 10 seconds
+  Timer? timer;
+
   @override
   void initState() {
     super.initState();
@@ -54,19 +56,33 @@ class _CallPageState extends State<CallPage> {
   @override
   deactivate() {
     super.deactivate();
+    if (timer != null) {
+      timer!.cancel();
+    }
     _signaling?.close();
     _localRenderer.dispose();
     _remoteRenderer.dispose();
   }
 
   /// Initialize RTCVideoRender.
-  initRenderers() async {
+  void initRenderers() async {
     await _localRenderer.initialize();
     await _remoteRenderer.initialize();
   }
 
+  /// Initialize timer
+  void startTimer() {
+    const tenSec = const Duration(seconds: 10);
+    timer = new Timer.periodic(
+      tenSec,
+      (Timer timer) {
+        _signaling!.ping();
+      },
+    );
+  }
+
   /// Initialize remote RTCVideoRender.
-  rtcInitialize() async {
+  void rtcInitialize() async {
     setState(() {
       _remoteRenderer = RTCVideoRenderer();
     });
@@ -81,6 +97,9 @@ class _CallPageState extends State<CallPage> {
         case SignalingState.ConnectionClosed:
         case SignalingState.ConnectionError:
         case SignalingState.ConnectionOpen:
+          if (timer == null) {
+            startTimer();
+          }
           break;
       }
     };
@@ -123,14 +142,14 @@ class _CallPageState extends State<CallPage> {
   }
 
   /// Invite peer to p2p call.
-  _invitePeer(BuildContext context, String peerId) async {
+  void _invitePeer(BuildContext context, String peerId) async {
     if (_signaling != null && peerId != _selfId) {
       _signaling?.invite(peerId);
     }
   }
 
   /// Ending p2p call.
-  _hangUp() async {
+  Future _hangUp() async {
     if (_session != null) {
       _signaling?.bye(_session!.sid);
     }
@@ -154,12 +173,13 @@ class _CallPageState extends State<CallPage> {
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             child: InkWell(
+              key: Key('backInkWell'),
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
               onTap: () {
                 setState(() {
                   if (opacityLevel == 1.0) {
-                    opacityLevel = 0;
+                    opacityLevel = 0.0;
                   } else {
                     opacityLevel = 1.0;
                   }
@@ -182,6 +202,7 @@ class _CallPageState extends State<CallPage> {
                   Positioned(
                     child: SafeArea(
                       child: AnimatedOpacity(
+                        key: Key('animatedOpacity'),
                         duration: Duration(milliseconds: 250),
                         opacity: opacityLevel,
                         child: Container(
@@ -251,27 +272,42 @@ class _CallPageState extends State<CallPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              ToggleVideoButton(
-                                status: cam,
+                              ToggleCallButtons(
+                                key: Key('videotoggle'),
+                                icon: (cam)
+                                    ? 'assets/video-off.svg'
+                                    : 'assets/video-on.svg',
                                 onClick: () {
                                   setState(() {
                                     cam = _signaling!.toggleCamera();
                                   });
                                 },
+                                color: (cam)
+                                    ? Color(0xFFD9D9D9)
+                                    : Color(0xFF6C6C6C),
                               ),
-                              ToggleAudioButton(
-                                status: mic,
+                              ToggleCallButtons(
+                                key: Key('mictoggle'),
+                                icon: (mic)
+                                    ? 'assets/mic-off.svg'
+                                    : 'assets/mic-on.svg',
                                 onClick: () {
                                   setState(() {
                                     mic = _signaling!.toggleMic();
                                   });
                                 },
+                                color: (mic)
+                                    ? Color(0xFFD9D9D9)
+                                    : Color(0xFF6C6C6C),
                               ),
-                              EndCallButton(
+                              ToggleCallButtons(
+                                key: Key('endcall'),
+                                icon: 'assets/end-call.svg',
                                 onClick: () async {
                                   Navigator.pop(context);
                                   await _hangUp();
                                 },
+                                color: Color(0xFF990000),
                               ),
                             ],
                           ),

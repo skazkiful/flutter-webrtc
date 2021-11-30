@@ -18,7 +18,7 @@ class SimpleWebSocket {
   /// This method used to make connect to our websocket.
   ///
   /// Which located on [wss://flutter-sandbox-skazkiful.herokuapp.com].
-  connect() async {
+  Future<void> connect() async {
     try {
       _socket = await WebSocket.connect(
           'wss://flutter-sandbox-skazkiful.herokuapp.com');
@@ -34,14 +34,14 @@ class SimpleWebSocket {
   }
 
   /// This method send [data] to websocket.
-  send(data) {
+  void send(data) {
     if (_socket != null) {
       _socket!.add(data);
     }
   }
 
   /// This method close connection to websocket.
-  close() {
+  Future<void> close() async {
     if (_socket != null) _socket!.close();
   }
 }

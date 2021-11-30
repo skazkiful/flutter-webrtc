@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'dart:async';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-
-import 'random_string.dart';
-
+import 'package:random_string/random_string.dart';
 import 'websocket.dart';
 
 /// States of signaling.
@@ -33,10 +31,20 @@ enum CallState {
 /// And [pid] - peer id.
 class Session {
   Session({required this.sid, required this.pid});
+
+  /// [pid] used to define peer id
   String pid;
+
+  /// [pid] used to define seed id
   String sid;
+
+  /// [pc] used to define Peer Connection
   RTCPeerConnection? pc;
+
+  /// [dc] used to define data channel
   RTCDataChannel? dc;
+
+  /// [remoteCandidates] used to define ICE servers
   List<RTCIceCandidate> remoteCandidates = [];
 }
 
@@ -107,26 +115,30 @@ class Signaling {
   Function(Session session, RTCDataChannel dc)? onDataChannel;
 
   /// Closes connection to websocket and cleans sessions.
-  close() async {
+  void close() async {
     await _cleanSessions();
     await _socket?.close();
   }
 
   /// Turn off and turn on users microphone.
-  toggleMic() {
+  bool toggleMic() {
     if (_localStream != null) {
       bool enabled = _localStream!.getAudioTracks()[0].enabled;
       _localStream!.getAudioTracks()[0].enabled = !enabled;
       return !enabled;
+    } else {
+      return true;
     }
   }
 
   /// This method trun off and turn on users camera.
-  toggleCamera() {
+  bool toggleCamera() {
     if (_localStream != null) {
       bool enabled = _localStream!.getVideoTracks()[0].enabled;
       _localStream!.getVideoTracks()[0].enabled = !enabled;
       return !enabled;
+    } else {
+      return true;
     }
   }
 
@@ -141,7 +153,7 @@ class Signaling {
   }
 
   /// End call with user closing their session [sessionId].
-  bye(String sessionId) {
+  void bye(String sessionId) {
     _send('bye', {
       'session_id': sessionId,
       'from': selfId,
@@ -150,6 +162,13 @@ class Signaling {
     if (sess != null) {
       _closeSession(sess);
     }
+  }
+
+  /// Used to ping to server
+  void ping() {
+    _send('ping', {
+      'from': selfId,
+    });
   }
 
   /// Method process [message] received from websocket.
@@ -286,7 +305,7 @@ class Signaling {
     return stream;
   }
 
-  /// Method create session beetwen two users.
+  /// Method create session between two users.
   ///
   /// [session] - session name.
   /// [peerId] - user id which will be connected with us.
@@ -383,7 +402,7 @@ class Signaling {
   ///
   /// Where [event] - event type.
   /// And [data] - message text.
-  _send(event, data) {
+  void _send(event, data) {
     Map request = Map();
     request["type"] = event;
     request["data"] = data;

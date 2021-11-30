@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_webrtc_app/call.dart';
+import 'package:flutter_sandbox/call.dart';
 
 void main() {
   runApp(MyApp());
@@ -10,6 +10,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      initialRoute: "/home",
+      routes: {
+        "/home": (BuildContext context) => MyHomePage(),
+        "/call": (BuildContext context) => CallPage(),
+      },
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         backgroundColor: Colors.white,
@@ -30,11 +35,9 @@ class MyHomePage extends StatelessWidget {
           color: Color(0xFF757DE8),
           borderRadius: BorderRadius.circular(8),
           child: InkWell(
+            key: Key('join'),
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext builder) => CallPage()));
+              Navigator.of(context).pushNamed("/call");
             },
             borderRadius: BorderRadius.circular(8),
             child: Container(
