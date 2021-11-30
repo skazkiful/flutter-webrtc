@@ -10,6 +10,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      initialRoute: "/home",
+      routes: {
+        "/home": (BuildContext context) => MyHomePage(),
+        "/call": (BuildContext context) => CallPage(),
+      },
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         backgroundColor: Colors.white,
@@ -32,10 +37,7 @@ class MyHomePage extends StatelessWidget {
           child: InkWell(
             key: Key('join'),
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext builder) => CallPage()));
+              Navigator.of(context).pushNamed("/call");
             },
             borderRadius: BorderRadius.circular(8),
             child: Container(

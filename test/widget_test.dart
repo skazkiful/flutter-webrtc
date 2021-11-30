@@ -35,4 +35,13 @@ void main() {
         tester.widget<AnimatedOpacity>(find.byKey(Key("animatedOpacity")));
     expect(opacityBlock.opacity, 1.0);
   });
+  testWidgets('Test routes', (tester) async {
+    await tester.pumpWidget(MyApp());
+    expect(find.byType(MyHomePage), findsOneWidget);
+    expect(find.byType(CallPage), findsNothing);
+    await tester.tap(find.text("Join"));
+    await tester.pumpAndSettle();
+    expect(find.byType(MyHomePage), findsNothing);
+    expect(find.byType(CallPage), findsOneWidget);
+  });
 }
