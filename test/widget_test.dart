@@ -6,30 +6,33 @@ import 'package:flutter_sandbox/main.dart';
 
 class MockNavigatorObserver extends Mock implements NavigatorObserver {}
 
-Widget createWidgetForTesting({required Widget child}){
+Widget createWidgetForTesting({required Widget child}) {
   return MaterialApp(
     home: child,
   );
 }
+
 void main() {
   testWidgets('Home Page tester', (tester) async {
     await tester.pumpWidget(MyApp());
     expect(find.byKey(Key('join')), findsOneWidget);
   });
   testWidgets('Call Page tester', (tester) async {
-    await tester.pumpWidget(createWidgetForTesting(child:CallPage()));
+    await tester.pumpWidget(createWidgetForTesting(child: CallPage()));
     expect(find.byKey(Key('videotoggle')), findsOneWidget);
     expect(find.byKey(Key('mictoggle')), findsOneWidget);
   });
   testWidgets('Call Page back animation tester', (tester) async {
-    await tester.pumpWidget(createWidgetForTesting(child:CallPage()));
+    await tester.pumpWidget(createWidgetForTesting(child: CallPage()));
     await tester.tap(find.byKey(Key('backInkWell')));
     await tester.pumpAndSettle(Duration(seconds: 3));
-    AnimatedOpacity opacityBlock = tester.widget<AnimatedOpacity>(find.byKey(Key("animatedOpacity")));
-    expect(opacityBlock.opacity,0.0);
+    AnimatedOpacity opacityBlock =
+        tester.widget<AnimatedOpacity>(find.byKey(Key("animatedOpacity")));
+    expect(opacityBlock.opacity, 0.0);
     await tester.tap(find.byKey(Key('backInkWell')));
     await tester.pumpAndSettle(Duration(seconds: 3));
-    opacityBlock = tester.widget<AnimatedOpacity>(find.byKey(Key("animatedOpacity")));
-    expect(opacityBlock.opacity,1.0);
+    opacityBlock =
+        tester.widget<AnimatedOpacity>(find.byKey(Key("animatedOpacity")));
+    expect(opacityBlock.opacity, 1.0);
   });
 }
