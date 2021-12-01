@@ -149,7 +149,7 @@ class _CallPageState extends State<CallPage> {
   }
 
   /// Ending p2p call.
-  Future _hangUp() async {
+  Future<void> _hangUp() async {
     if (_session != null) {
       _signaling?.bye(_session!.sid);
     }
