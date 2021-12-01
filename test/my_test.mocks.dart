@@ -3,9 +3,10 @@
 // Do not manually edit this file.
 
 import 'dart:async' as _i4;
+import 'dart:typed_data' as _i3;
 
-import 'package:flutter_sandbox/signaling.dart' as _i3;
-import 'package:flutter_webrtc/flutter_webrtc.dart' as _i2;
+import 'package:flutter_webrtc/src/interface/media_stream.dart' as _i2;
+import 'package:flutter_webrtc/src/interface/media_stream_track.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: avoid_redundant_argument_values
@@ -19,104 +20,163 @@ import 'package:mockito/mockito.dart' as _i1;
 
 class _FakeMediaStream_0 extends _i1.Fake implements _i2.MediaStream {}
 
-/// A class which mocks [Signaling].
+class _FakeByteBuffer_1 extends _i1.Fake implements _i3.ByteBuffer {}
+
+/// A class which mocks [MediaStream].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockSignaling extends _i1.Mock implements _i3.Signaling {
-  MockSignaling() {
+class MockMediaStream extends _i1.Mock implements _i2.MediaStream {
+  MockMediaStream() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  String get selfId =>
-      (super.noSuchMethod(Invocation.getter(#selfId), returnValue: '')
+  set onAddTrack(_i2.MediaTrackCallback? _onAddTrack) =>
+      super.noSuchMethod(Invocation.setter(#onAddTrack, _onAddTrack),
+          returnValueForMissingStub: null);
+  @override
+  set onRemoveTrack(_i2.MediaTrackCallback? _onRemoveTrack) =>
+      super.noSuchMethod(Invocation.setter(#onRemoveTrack, _onRemoveTrack),
+          returnValueForMissingStub: null);
+  @override
+  String get id =>
+      (super.noSuchMethod(Invocation.getter(#id), returnValue: '') as String);
+  @override
+  String get ownerTag =>
+      (super.noSuchMethod(Invocation.getter(#ownerTag), returnValue: '')
           as String);
   @override
-  set selfId(String? _selfId) =>
-      super.noSuchMethod(Invocation.setter(#selfId, _selfId),
-          returnValueForMissingStub: null);
-  @override
-  set onSignalingStateChange(
-          dynamic Function(_i3.SignalingState)? _onSignalingStateChange) =>
-      super.noSuchMethod(
-          Invocation.setter(#onSignalingStateChange, _onSignalingStateChange),
-          returnValueForMissingStub: null);
-  @override
-  set onCallStateChange(
-          dynamic Function(_i3.Session, _i3.CallState)? _onCallStateChange) =>
-      super.noSuchMethod(
-          Invocation.setter(#onCallStateChange, _onCallStateChange),
-          returnValueForMissingStub: null);
-  @override
-  set onLocalStream(dynamic Function(_i2.MediaStream)? _onLocalStream) =>
-      super.noSuchMethod(Invocation.setter(#onLocalStream, _onLocalStream),
-          returnValueForMissingStub: null);
-  @override
-  set onAddRemoteStream(
-          dynamic Function(_i3.Session, _i2.MediaStream)? _onAddRemoteStream) =>
-      super.noSuchMethod(
-          Invocation.setter(#onAddRemoteStream, _onAddRemoteStream),
-          returnValueForMissingStub: null);
-  @override
-  set onRemoveRemoteStream(
-          dynamic Function(_i3.Session, _i2.MediaStream)?
-              _onRemoveRemoteStream) =>
-      super.noSuchMethod(
-          Invocation.setter(#onRemoveRemoteStream, _onRemoveRemoteStream),
-          returnValueForMissingStub: null);
-  @override
-  set onPeersUpdate(dynamic Function(dynamic)? _onPeersUpdate) =>
-      super.noSuchMethod(Invocation.setter(#onPeersUpdate, _onPeersUpdate),
-          returnValueForMissingStub: null);
-  @override
-  set onDataChannelMessage(
-          dynamic Function(
-                  _i3.Session, _i2.RTCDataChannel, _i2.RTCDataChannelMessage)?
-              _onDataChannelMessage) =>
-      super.noSuchMethod(
-          Invocation.setter(#onDataChannelMessage, _onDataChannelMessage),
-          returnValueForMissingStub: null);
-  @override
-  set onDataChannel(
-          dynamic Function(_i3.Session, _i2.RTCDataChannel)? _onDataChannel) =>
-      super.noSuchMethod(Invocation.setter(#onDataChannel, _onDataChannel),
-          returnValueForMissingStub: null);
-  @override
-  void close() => super.noSuchMethod(Invocation.method(#close, []),
-      returnValueForMissingStub: null);
-  @override
-  bool toggleMic() =>
-      (super.noSuchMethod(Invocation.method(#toggleMic, []), returnValue: false)
-          as bool);
-  @override
-  bool toggleCamera() =>
-      (super.noSuchMethod(Invocation.method(#toggleCamera, []),
-          returnValue: false) as bool);
-  @override
-  void invite(String? peerId) =>
-      super.noSuchMethod(Invocation.method(#invite, [peerId]),
-          returnValueForMissingStub: null);
-  @override
-  void bye(String? sessionId) =>
-      super.noSuchMethod(Invocation.method(#bye, [sessionId]),
-          returnValueForMissingStub: null);
-  @override
-  void ping() => super.noSuchMethod(Invocation.method(#ping, []),
-      returnValueForMissingStub: null);
-  @override
-  void onMessage(dynamic message) =>
-      super.noSuchMethod(Invocation.method(#onMessage, [message]),
-          returnValueForMissingStub: null);
-  @override
-  _i4.Future<void> connect() =>
-      (super.noSuchMethod(Invocation.method(#connect, []),
+  _i4.Future<void> getMediaTracks() =>
+      (super.noSuchMethod(Invocation.method(#getMediaTracks, []),
           returnValue: Future<void>.value(),
           returnValueForMissingStub: Future<void>.value()) as _i4.Future<void>);
   @override
-  _i4.Future<_i2.MediaStream> createStream() =>
-      (super.noSuchMethod(Invocation.method(#createStream, []),
-              returnValue: Future<_i2.MediaStream>.value(_FakeMediaStream_0()))
-          as _i4.Future<_i2.MediaStream>);
+  _i4.Future<void> addTrack(_i5.MediaStreamTrack? track,
+          {bool? addToNative = true}) =>
+      (super.noSuchMethod(
+          Invocation.method(#addTrack, [track], {#addToNative: addToNative}),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i4.Future<void>);
+  @override
+  _i4.Future<void> removeTrack(_i5.MediaStreamTrack? track,
+          {bool? removeFromNative = true}) =>
+      (super.noSuchMethod(
+          Invocation.method(
+              #removeTrack, [track], {#removeFromNative: removeFromNative}),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i4.Future<void>);
+  @override
+  List<_i5.MediaStreamTrack> getTracks() =>
+      (super.noSuchMethod(Invocation.method(#getTracks, []),
+          returnValue: <_i5.MediaStreamTrack>[]) as List<_i5.MediaStreamTrack>);
+  @override
+  List<_i5.MediaStreamTrack> getAudioTracks() =>
+      (super.noSuchMethod(Invocation.method(#getAudioTracks, []),
+          returnValue: <_i5.MediaStreamTrack>[]) as List<_i5.MediaStreamTrack>);
+  @override
+  List<_i5.MediaStreamTrack> getVideoTracks() =>
+      (super.noSuchMethod(Invocation.method(#getVideoTracks, []),
+          returnValue: <_i5.MediaStreamTrack>[]) as List<_i5.MediaStreamTrack>);
+  @override
+  _i5.MediaStreamTrack? getTrackById(String? trackId) =>
+      (super.noSuchMethod(Invocation.method(#getTrackById, [trackId]))
+          as _i5.MediaStreamTrack?);
+  @override
+  _i2.MediaStream clone() => (super.noSuchMethod(Invocation.method(#clone, []),
+      returnValue: _FakeMediaStream_0()) as _i2.MediaStream);
+  @override
+  _i4.Future<void> dispose() =>
+      (super.noSuchMethod(Invocation.method(#dispose, []),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i4.Future<void>);
+  @override
+  String toString() => super.toString();
+}
+
+/// A class which mocks [MediaStreamTrack].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockMediaStreamTrack extends _i1.Mock implements _i5.MediaStreamTrack {
+  MockMediaStreamTrack() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  set onMute(_i5.StreamTrackCallback? _onMute) =>
+      super.noSuchMethod(Invocation.setter(#onMute, _onMute),
+          returnValueForMissingStub: null);
+  @override
+  set onUnMute(_i5.StreamTrackCallback? _onUnMute) =>
+      super.noSuchMethod(Invocation.setter(#onUnMute, _onUnMute),
+          returnValueForMissingStub: null);
+  @override
+  set onEnded(_i5.StreamTrackCallback? _onEnded) =>
+      super.noSuchMethod(Invocation.setter(#onEnded, _onEnded),
+          returnValueForMissingStub: null);
+  @override
+  bool get enabled =>
+      (super.noSuchMethod(Invocation.getter(#enabled), returnValue: false)
+          as bool);
+  @override
+  set enabled(bool? b) => super.noSuchMethod(Invocation.setter(#enabled, b),
+      returnValueForMissingStub: null);
+  @override
+  Map<String, dynamic> getConstraints() =>
+      (super.noSuchMethod(Invocation.method(#getConstraints, []),
+          returnValue: <String, dynamic>{}) as Map<String, dynamic>);
+  @override
+  _i4.Future<void> applyConstraints([Map<String, dynamic>? constraints]) =>
+      (super.noSuchMethod(Invocation.method(#applyConstraints, [constraints]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i4.Future<void>);
+  @override
+  _i4.Future<void> stop() => (super.noSuchMethod(Invocation.method(#stop, []),
+      returnValue: Future<void>.value(),
+      returnValueForMissingStub: Future<void>.value()) as _i4.Future<void>);
+  @override
+  Map<String, dynamic> getSettings() =>
+      (super.noSuchMethod(Invocation.method(#getSettings, []),
+          returnValue: <String, dynamic>{}) as Map<String, dynamic>);
+  @override
+  _i4.Future<bool> switchCamera() =>
+      (super.noSuchMethod(Invocation.method(#switchCamera, []),
+          returnValue: Future<bool>.value(false)) as _i4.Future<bool>);
+  @override
+  _i4.Future<void> adaptRes(int? width, int? height) =>
+      (super.noSuchMethod(Invocation.method(#adaptRes, [width, height]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i4.Future<void>);
+  @override
+  void setVolume(double? volume) =>
+      super.noSuchMethod(Invocation.method(#setVolume, [volume]),
+          returnValueForMissingStub: null);
+  @override
+  void setMicrophoneMute(bool? mute) =>
+      super.noSuchMethod(Invocation.method(#setMicrophoneMute, [mute]),
+          returnValueForMissingStub: null);
+  @override
+  void enableSpeakerphone(bool? enable) =>
+      super.noSuchMethod(Invocation.method(#enableSpeakerphone, [enable]),
+          returnValueForMissingStub: null);
+  @override
+  _i4.Future<_i3.ByteBuffer> captureFrame() =>
+      (super.noSuchMethod(Invocation.method(#captureFrame, []),
+              returnValue: Future<_i3.ByteBuffer>.value(_FakeByteBuffer_1()))
+          as _i4.Future<_i3.ByteBuffer>);
+  @override
+  _i4.Future<bool> hasTorch() =>
+      (super.noSuchMethod(Invocation.method(#hasTorch, []),
+          returnValue: Future<bool>.value(false)) as _i4.Future<bool>);
+  @override
+  _i4.Future<void> setTorch(bool? torch) =>
+      (super.noSuchMethod(Invocation.method(#setTorch, [torch]),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i4.Future<void>);
+  @override
+  _i4.Future<void> dispose() =>
+      (super.noSuchMethod(Invocation.method(#dispose, []),
+          returnValue: Future<void>.value(),
+          returnValueForMissingStub: Future<void>.value()) as _i4.Future<void>);
   @override
   String toString() => super.toString();
 }

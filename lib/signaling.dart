@@ -62,7 +62,7 @@ class Signaling {
   Map<String, Session> _sessions = {};
 
   /// Local video and audio stream.
-  MediaStream? _localStream;
+  MediaStream? localStream;
 
   /// Remote users video and audio streams.
   List<MediaStream> _remoteStreams = <MediaStream>[];
@@ -122,9 +122,9 @@ class Signaling {
 
   /// Turn off and turn on users microphone.
   bool toggleMic() {
-    if (_localStream != null) {
-      bool enabled = _localStream!.getAudioTracks()[0].enabled;
-      _localStream!.getAudioTracks()[0].enabled = !enabled;
+    if (localStream != null) {
+      bool enabled = localStream!.getAudioTracks()[0].enabled;
+      localStream!.getAudioTracks()[0].enabled = !enabled;
       return !enabled;
     } else {
       return true;
@@ -133,9 +133,10 @@ class Signaling {
 
   /// This method trun off and turn on users camera.
   bool toggleCamera() {
-    if (_localStream != null) {
-      bool enabled = _localStream!.getVideoTracks()[0].enabled;
-      _localStream!.getVideoTracks()[0].enabled = !enabled;
+    print(localStream);
+    if (localStream != null) {
+      bool enabled = localStream!.getVideoTracks()[0].enabled;
+      localStream!.getVideoTracks()[0].enabled = !enabled;
       return !enabled;
     } else {
       return true;
@@ -280,7 +281,7 @@ class Signaling {
       print('Closed by server [$code => $reason]!');
       onSignalingStateChange?.call(SignalingState.ConnectionClosed);
     };
-    _localStream = await createStream();
+    localStream = await createStream();
     await _socket?.connect();
   }
 
@@ -321,8 +322,8 @@ class Signaling {
         onAddRemoteStream?.call(newSession, event.streams[0]);
       }
     };
-    _localStream!.getTracks().forEach((track) {
-      pc.addTrack(track, _localStream!);
+    localStream!.getTracks().forEach((track) {
+      pc.addTrack(track, localStream!);
     });
     pc.onIceCandidate = (candidate) async {
       await Future.delayed(
