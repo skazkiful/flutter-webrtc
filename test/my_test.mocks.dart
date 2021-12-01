@@ -20,8 +20,6 @@ import 'package:mockito/mockito.dart' as _i1;
 
 class _FakeMediaStream_0 extends _i1.Fake implements _i2.MediaStream {}
 
-class _FakeByteBuffer_1 extends _i1.Fake implements _i3.ByteBuffer {}
-
 /// A class which mocks [MediaStream].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -158,11 +156,6 @@ class MockMediaStreamTrack extends _i1.Mock implements _i5.MediaStreamTrack {
   void enableSpeakerphone(bool? enable) =>
       super.noSuchMethod(Invocation.method(#enableSpeakerphone, [enable]),
           returnValueForMissingStub: null);
-  @override
-  _i4.Future<_i3.ByteBuffer> captureFrame() =>
-      (super.noSuchMethod(Invocation.method(#captureFrame, []),
-              returnValue: Future<_i3.ByteBuffer>.value(_FakeByteBuffer_1()))
-          as _i4.Future<_i3.ByteBuffer>);
   @override
   _i4.Future<bool> hasTorch() =>
       (super.noSuchMethod(Invocation.method(#hasTorch, []),

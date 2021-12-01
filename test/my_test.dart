@@ -1,59 +1,57 @@
+import 'dart:io';
+
+import 'package:flutter_sandbox/websocket.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sandbox/signaling.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:flutter_sandbox/websocket.dart';
 import 'my_test.mocks.dart';
 
-class NewSignaling extends Signaling{
-  @override
-  Future<MediaStream> createStream() async {
-    MockMediaStream myStream = MockMediaStream();
-    MockMediaStreamTrack track = MockMediaStreamTrack();
-    track.enabled = true;
-    myStream.addTrack(track);
-    return myStream;
-  }
-}
-
-Widget createWidgetForTesting({required Widget child}) {
-  return MaterialApp(
-    home: child,
-  );
-}
-
-@GenerateMocks([MediaStream,MediaStreamTrack])
+@GenerateMocks([MediaStream, MediaStreamTrack])
 void main() {
   test('Test toggle camera', () async {
-    var toggle = true;
-    Signaling _signaling = NewSignaling();
-    _signaling.localStream = await _signaling.createStream();
-    when(_signaling.localStream!.getVideoTracks()).thenAnswer((realInvocation){
-      return _signaling.localStream!.getVideoTracks();
+    Signaling _signaling = Signaling();
+    MockMediaStream myStream = MockMediaStream();
+    MockMediaStreamTrack track = MockMediaStreamTrack();
+    _signaling.localStream = myStream;
+    when(myStream.getVideoTracks()).thenAnswer((realInvocation) {
+      return [track];
     });
-    when(_signaling.localStream).thenAnswer((_){
-      return _signaling.localStream;
+    when(track.enabled).thenAnswer((realInvocation) {
+      return true;
     });
-    print(_signaling.toggleCamera());
+    expect(_signaling.toggleCamera(), isFalse);
   });
 
-  /*test('Test toggle microphone', () async {
-    Signaling _signaling = MockSignaling();
-    bool mic = true;
-    when(_signaling.toggleMic()).thenReturn(!mic);
-    mic = _signaling.toggleMic();
-    verify(_signaling.toggleMic());
-    expect(mic, isFalse);
+  test('Test toggle microphone', () async {
+    Signaling _signaling = Signaling();
+    MockMediaStream myStream = MockMediaStream();
+    MockMediaStreamTrack track = MockMediaStreamTrack();
+    _signaling.localStream = myStream;
+    when(myStream.getAudioTracks()).thenAnswer((realInvocation) {
+      return [track];
+    });
+    when(track.enabled).thenAnswer((realInvocation) {
+      return true;
+    });
+    expect(_signaling.toggleMic(), isFalse);
   });
 
   test('Test websocket', () async {
-    Signaling _signaling = MockSignaling();
-    bool mic = true;
-    when(_signaling.toggleMic()).thenReturn(!mic);
-    mic = _signaling.toggleMic();
-    verify(_signaling.toggleMic());
-    expect(mic, isFalse);
-  });*/
+    SimpleWebSocket websocket = SimpleWebSocket();
+    bool wasOpen = false;
+    bool wasClose = false;
+    websocket.onOpen = () async {
+      wasOpen = true;
+      await websocket.close();
+    };
+    websocket.onClose = (r, v) {
+      wasClose = true;
+      expect(wasOpen, true);
+      expect(wasClose, true);
+    };
+    await websocket.connect();
+  });
 }

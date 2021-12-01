@@ -133,7 +133,6 @@ class Signaling {
 
   /// This method trun off and turn on users camera.
   bool toggleCamera() {
-    print(localStream);
     if (localStream != null) {
       bool enabled = localStream!.getVideoTracks()[0].enabled;
       localStream!.getVideoTracks()[0].enabled = !enabled;
@@ -265,7 +264,6 @@ class Signaling {
   Future<void> connect() async {
     _socket = SimpleWebSocket();
     _socket?.onOpen = () {
-      print('onOpen');
       onSignalingStateChange?.call(SignalingState.ConnectionOpen);
       _send('new', {
         'id': selfId,
