@@ -3,7 +3,6 @@
 // Do not manually edit this file.
 
 import 'dart:async' as _i4;
-import 'dart:typed_data' as _i3;
 
 import 'package:flutter_webrtc/src/interface/media_stream.dart' as _i2;
 import 'package:flutter_webrtc/src/interface/media_stream_track.dart' as _i5;
