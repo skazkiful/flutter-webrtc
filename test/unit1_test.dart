@@ -4,7 +4,8 @@ import 'package:flutter_sandbox/signaling.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'my_test.mocks.dart';
+
+import 'unit1_test.mocks.dart';
 
 @GenerateMocks([MediaStream, MediaStreamTrack])
 void main() {

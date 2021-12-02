@@ -28,23 +28,23 @@ class _CallPageState extends State<CallPage> {
   /// Used for toggling camera on CallPage class.
   bool cam = true;
 
+  /// Timer variable, used to ping websocket every 10 seconds
+  Timer? timer;
+
+  /// Local users media data stream.
+  RTCVideoRenderer localRenderer = RTCVideoRenderer();
+
+  /// Remote users media data stream.
+  RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
+
   /// String with local users id.
   String? _selfId;
 
   /// Current session.
   Session? _session;
 
-  /// Local users media data stream.
-  RTCVideoRenderer _localRenderer = RTCVideoRenderer();
-
-  /// Remote users media data stream.
-  RTCVideoRenderer _remoteRenderer = RTCVideoRenderer();
-
   /// Variable used to interact with [Signaling] class.
   Signaling? _signaling;
-
-  /// Timer variable, used to ping websocket every 10 seconds
-  Timer? timer;
 
   @override
   void initState() {
@@ -56,18 +56,16 @@ class _CallPageState extends State<CallPage> {
   @override
   deactivate() {
     super.deactivate();
-    if (timer != null) {
-      timer!.cancel();
-    }
+    stopTimer();
     _signaling?.close();
-    _localRenderer.dispose();
-    _remoteRenderer.dispose();
+    localRenderer.dispose();
+    remoteRenderer.dispose();
   }
 
   /// Initialize RTCVideoRender.
-  void initRenderers() async {
-    await _localRenderer.initialize();
-    await _remoteRenderer.initialize();
+  Future<void> initRenderers() async {
+    await localRenderer.initialize();
+    await remoteRenderer.initialize();
   }
 
   /// Initialize timer
@@ -81,12 +79,19 @@ class _CallPageState extends State<CallPage> {
     );
   }
 
+  /// Stop working timer
+  void stopTimer() {
+    if (timer != null) {
+      timer!.cancel();
+    }
+  }
+
   /// Initialize remote RTCVideoRender.
   void rtcInitialize() async {
     setState(() {
-      _remoteRenderer = RTCVideoRenderer();
+      remoteRenderer = RTCVideoRenderer();
     });
-    await _remoteRenderer.initialize();
+    await remoteRenderer.initialize();
   }
 
   /// This method used when need to connect to websocket using [Signaling] class and [connect] method.
@@ -122,13 +127,13 @@ class _CallPageState extends State<CallPage> {
 
     _signaling?.onLocalStream = ((stream) {
       setState(() {
-        _localRenderer.srcObject = stream;
+        localRenderer.srcObject = stream;
       });
     });
 
     _signaling?.onAddRemoteStream = ((_, stream) {
       setState(() {
-        _remoteRenderer.srcObject = stream;
+        remoteRenderer.srcObject = stream;
       });
     });
 
@@ -154,8 +159,8 @@ class _CallPageState extends State<CallPage> {
       _signaling?.bye(_session!.sid);
     }
     setState(() {
-      _localRenderer.srcObject = null;
-      _remoteRenderer.srcObject = null;
+      localRenderer.srcObject = null;
+      remoteRenderer.srcObject = null;
       _session = null;
     });
   }
@@ -193,7 +198,7 @@ class _CallPageState extends State<CallPage> {
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height,
                       child: RTCVideoView(
-                        _remoteRenderer,
+                        remoteRenderer,
                         objectFit:
                             RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
                       ),
@@ -240,7 +245,7 @@ class _CallPageState extends State<CallPage> {
                             width: 119.0,
                             height: 159.0,
                             child: RTCVideoView(
-                              _localRenderer,
+                              localRenderer,
                               mirror: true,
                               objectFit: RTCVideoViewObjectFit
                                   .RTCVideoViewObjectFitCover,

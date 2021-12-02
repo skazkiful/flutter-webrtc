@@ -55,14 +55,14 @@ class Signaling {
   /// [selfId] - random number to define own id.
   String selfId = randomNumeric(6);
 
+  /// Local video and audio stream.
+  MediaStream? localStream;
+
   /// [_socket] - used to interact with [SimpleWebSocket] class.
   SimpleWebSocket? _socket;
 
   /// List of users sessions.
   Map<String, Session> _sessions = {};
-
-  /// Local video and audio stream.
-  MediaStream? localStream;
 
   /// Remote users video and audio streams.
   List<MediaStream> _remoteStreams = <MediaStream>[];
