@@ -11,7 +11,7 @@ class ToggleCallButtons extends StatelessWidget {
       required this.icon,
       this.key});
 
-  ///
+  /// Key
   final Key? key;
 
   /// Used to return Function when user click on button
